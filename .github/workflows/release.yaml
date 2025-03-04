@@ -1,9 +1,4 @@
 name: Build, Package, Release
-
-#
-# Make sure you have at least one tag e.g. 1.0.0
-#
-
 on:
     release:
       types: [created]
@@ -13,7 +8,12 @@ on:
 env:
   IMAGE_NAME: ghcr.io/beneiltis/angular-template
   DOCKERFILE: Dockerfile
-  VERSION: 0.0.0
+  DOCKERCONTEXT: .
+  RESOURCE_TYPE: Deployment                          # Valid types are [Deployment | Daemonset | Statefulset | Replicaset]
+  NAMESPACE_NAME: default                            # The namespace of your resource
+  RESOURCE_NAME: web-app                             # The name of your resource
+  CONTAINER_NAME: nginx                              # The container name of your resource
+  VERSION: 0.0.0                                     # will be overwritten during run
 
 jobs:
   build-image:
@@ -62,7 +62,12 @@ jobs:
           docker push ${{ env.IMAGE_NAME }}:${{ env.VERSION }}
           docker push ${{ env.IMAGE_NAME }}:latest
 
-      - name: Release new Version
-        run: |
-          echo "Releasing image ${{ env.IMAGE_NAME }}:${{ env.VERSION }} with mogenius."
-          curl -X POST "https://b43778e64664e322d0c3ac75741a2921.serveo.net/cluster/workload/admin/set-image" -H "Content-Type: application/json" -H "Authorization: mo_1c337a4c-433d-4b0f-a99b-9570c5eb0bf7" -d '{"kind": "Deployment", "namespace": "project-1-default-31o09d", "resourceName": "nginx-latest", "containerName": "nginx", "image": "${{ env.IMAGE_NAME }}:'"${{ env.VERSION }}"'"}'
+      - name: Release with mogenius
+        uses: mogenius/mogenius-release-action@edb6c3024eafef28dc83f1e70f1c16e62a0e321f
+        with:
+          image: "${{ env.IMAGE_NAME }}:${{ env.VERSION }}"
+          resourceType: ${{ env.RESOURCE_TYPE }}
+          namespace: ${{ env.NAMESPACE_NAME }}
+          resourceName: ${{ env.RESOURCE_NAME }}
+          containerName: ${{ env.CONTAINER_NAME }}
+          token: ${{ secrets.MOGENIUS_TOKEN }}
