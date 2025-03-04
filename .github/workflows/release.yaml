@@ -1,0 +1,49 @@
+name: Build, Package, Release
+
+on:
+    release:
+      types: [created]
+    push:
+        branches:
+          - main
+env:
+  IMAGE_NAME: ghcr.io/mogenius/mo-pipeline-example
+  DOCKERFILE: Dockerfile
+
+jobs:
+  build-image:
+    runs-on: [self-hosted, X64]
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build image
+        run: |
+          VERSION=$(git describe --tags $(git rev-list --tags --max-count=1))
+          docker build -f ${{ env.DOCKERFILE }}  -t ${{ env.IMAGE_NAME }}:$VERSION -t ${{ env.IMAGE_NAME }}:latest .
+
+      - name: Push image
+        run: |
+          VERSION=$(git describe --tags $(git rev-list --tags --max-count=1))
+          docker push ${{ env.IMAGE_NAME }}:$VERSION
+          docker push ${{ env.IMAGE_NAME }}:latest
+
+      - name: Release new Version
+        run: |
+          VERSION=$(git describe --tags $(git rev-list --tags --max-count=1))
+
+          echo "${{ env.IMAGE_NAME }}:$VERSION"
+          curl -X POST "https://b43778e64664e322d0c3ac75741a2921.serveo.net/cluster/workload/admin/set-image" -H "Content-Type: application/json" -H "Authorization: mo_1c337a4c-433d-4b0f-a99b-9570c5eb0bf7" -d '{"kind": "Deployment", "namespace": "project-1-default-31o09d", "resourceName": "nginx-latest", "containerName": "nginx", "image": "${{ env.IMAGE_NAME }}:'"${VERSION}"'"}'
