@@ -1,5 +1,9 @@
 name: Build, Package, Release
 
+#
+# Make sure you have at least one tag e.g. 1.0.0
+#
+
 on:
     release:
       types: [created]
@@ -7,7 +11,7 @@ on:
         branches:
           - main
 env:
-  IMAGE_NAME: ghcr.io/mogenius/mo-pipeline-example
+  IMAGE_NAME: ghcr.io/beneiltis/angular-template
   DOCKERFILE: Dockerfile
 
 jobs:
