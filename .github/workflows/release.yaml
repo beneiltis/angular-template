@@ -10,15 +10,15 @@ env:
   # REGISTRY_USER   ${{ github.repository_owner }} must be replaced with the user login
   # REGISTRY_TOKEN  ${{ secrets.GITHUB_TOKEN }} must be replaced with the user token
 
-  IMAGE_NAME: ghcr.io/beneiltis/angular-template
+  IMAGE_NAME: ghcr.io/beneiltis/bb-test
   
   DOCKERFILE: Dockerfile
   DOCKERCONTEXT: .
   DOCKER_ARGS: ""                                    # inject arbitrary arguments into the docker build
   
   KIND: Deployment                                   # Valid types are [Deployment | Daemonset | Statefulset | Replicaset]
-  NAMESPACE_NAME: default                            # The namespace of your resource
-  RESOURCE_NAME: web-app                             # The name of your resource
+  NAMESPACE_NAME: project-1-default-31o09d                            # The namespace of your resource
+  RESOURCE_NAME: nginx-latest                             # The name of your resource
   CONTAINER_NAME: nginx                              # The container name of your resource
   VERSION: 0.0.0                                     # will be overwritten during run
   # API_TOKEN: ${{ secrets.MOGENIUS_TOKEN }} must be replaced with the mogenius user api token
