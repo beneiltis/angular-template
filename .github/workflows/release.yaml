@@ -6,15 +6,23 @@ on:
         branches:
           - main
 env:
+  REGISTRY_HOST: ghcr.io                             # Host of the container registry to login
+  # REGISTRY_USER   ${{ github.repository_owner }} must be replaced with the user login
+  # REGISTRY_TOKEN  ${{ secrets.GITHUB_TOKEN }} must be replaced with the user token
+
   IMAGE_NAME: ghcr.io/beneiltis/angular-template
+  
   DOCKERFILE: Dockerfile
   DOCKERCONTEXT: .
-  KIND: Deployment                           # Valid types are [Deployment | Daemonset | Statefulset | Replicaset]
-  NAMESPACE_NAME: default                    # The namespace of your resource
-  RESOURCE_NAME: web-app                     # The name of your resource
-  CONTAINER_NAME: nginx                      # The container name of your resource
-  VERSION: 0.0.0                             # will be overwritten during run
-
+  DOCKER_ARGS: ""                                    # inject arbitrary arguments into the docker build
+  
+  KIND: Deployment                                   # Valid types are [Deployment | Daemonset | Statefulset | Replicaset]
+  NAMESPACE_NAME: default                            # The namespace of your resource
+  RESOURCE_NAME: web-app                             # The name of your resource
+  CONTAINER_NAME: nginx                              # The container name of your resource
+  VERSION: 0.0.0                                     # will be overwritten during run
+  # API_TOKEN: ${{ secrets.MOGENIUS_TOKEN }} must be replaced with the mogenius user api token
+  
 jobs:
   build-image:
     runs-on: ubuntu-latest
@@ -46,16 +54,16 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "Determined version: $VERSION"
 
-      - name: Login to GitHub Container Registry
+      - name: Login to Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY_HOST }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build image
         run: |
-          docker build -f ${{ env.DOCKERFILE }}  -t ${{ env.IMAGE_NAME }}:${{ env.VERSION }} -t ${{ env.IMAGE_NAME }}:latest .
+          docker build -f ${{ env.DOCKERFILE }} ${{env.DOCKER_ARGS}} -t ${{ env.IMAGE_NAME }}:${{ env.VERSION }} -t ${{ env.IMAGE_NAME }}:latest .
 
       - name: Push image
         run: |
