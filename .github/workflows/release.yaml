@@ -9,11 +9,11 @@ env:
   IMAGE_NAME: ghcr.io/beneiltis/angular-template
   DOCKERFILE: Dockerfile
   DOCKERCONTEXT: .
-  RESOURCE_TYPE: Deployment                          # Valid types are [Deployment | Daemonset | Statefulset | Replicaset]
-  NAMESPACE_NAME: default                            # The namespace of your resource
-  RESOURCE_NAME: web-app                             # The name of your resource
-  CONTAINER_NAME: nginx                              # The container name of your resource
-  VERSION: 0.0.0                                     # will be overwritten during run
+  KIND: Deployment                           # Valid types are [Deployment | Daemonset | Statefulset | Replicaset]
+  NAMESPACE_NAME: default                    # The namespace of your resource
+  RESOURCE_NAME: web-app                     # The name of your resource
+  CONTAINER_NAME: nginx                      # The container name of your resource
+  VERSION: 0.0.0                             # will be overwritten during run
 
 jobs:
   build-image:
@@ -63,10 +63,10 @@ jobs:
           docker push ${{ env.IMAGE_NAME }}:latest
 
       - name: Release with mogenius
-        uses: mogenius/mogenius-release-action@edb6c3024eafef28dc83f1e70f1c16e62a0e321f
+        uses: mogenius/mogenius-release-action@v1
         with:
           image: "${{ env.IMAGE_NAME }}:${{ env.VERSION }}"
-          resourceType: ${{ env.RESOURCE_TYPE }}
+          kind: ${{ env.KIND }}
           namespace: ${{ env.NAMESPACE_NAME }}
           resourceName: ${{ env.RESOURCE_NAME }}
           containerName: ${{ env.CONTAINER_NAME }}
