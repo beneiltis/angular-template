@@ -10,7 +10,7 @@ env:
   # REGISTRY_USER   ${{ github.repository_owner }} must be replaced with the user login
   # REGISTRY_TOKEN  ${{ secrets.GITHUB_TOKEN }} must be replaced with the user token
 
-  IMAGE_NAME: ghcr.io/beneiltis/bb-test
+  IMAGE_NAME: ghcr.io/beneiltis/bb-test-1
   
   DOCKERFILE: Dockerfile
   DOCKERCONTEXT: .
