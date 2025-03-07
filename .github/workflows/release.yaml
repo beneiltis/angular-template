@@ -15,12 +15,13 @@ env:
   DOCKERFILE: Dockerfile
   DOCKERCONTEXT: .
   DOCKER_ARGS: ""                                    # inject arbitrary arguments into the docker build
-  
+
   KIND: Deployment                                   # Valid types are [Deployment | Daemonset | Statefulset | Replicaset]
   NAMESPACE_NAME: project-1-default-31o09d                            # The namespace of your resource
   RESOURCE_NAME: nginx-latest                             # The name of your resource
   CONTAINER_NAME: nginx                              # The container name of your resource
   VERSION: 0.0.0                                     # will be overwritten during run
+  API_KIND: cluster
   # API_TOKEN: ${{ secrets.MOGENIUS_TOKEN }} must be replaced with the mogenius user api token
   
 jobs:
@@ -79,4 +80,5 @@ jobs:
           namespace: ${{ env.NAMESPACE_NAME }}
           resourceName: ${{ env.RESOURCE_NAME }}
           containerName: ${{ env.CONTAINER_NAME }}
+          apiKind: ${{ env.API_KIND }}
           token: ${{ secrets.MOGENIUS_TOKEN }}
