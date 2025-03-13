@@ -49,7 +49,7 @@ jobs:
 
       - name: Build image
         run: |
-          docker build -f ${{ vars.DOCKERFILE }} ${{vars.DOCKER_ARGS}} -t ${{ vars.IMAGE_NAME }}:${{ vars.VERSION }} -t ${{ vars.IMAGE_NAME }}:latest ${{vars.DOCKERCONTEXT}}
+          docker build -f ${{ vars.DOCKERFILE }} ${{vars.DOCKER_ARGS}} -t ${{ vars.IMAGE_NAME }}:${{ env.VERSION }} -t ${{ vars.IMAGE_NAME }}:latest ${{vars.DOCKERCONTEXT}}
 
       - name: Push image
         run: |
@@ -60,7 +60,7 @@ jobs:
         uses: mogenius/mogenius-release-action@v1
         with:
           dev: true
-          image: "${{ vars.IMAGE_NAME }}:${{ vars.VERSION }}"
+          image: "${{ vars.IMAGE_NAME }}:${{ env.VERSION }}"
           kind: ${{ vars.KIND }}
           namespace: ${{ vars.NAMESPACE_NAME }}
           resourceName: ${{ vars.RESOURCE_NAME }}
