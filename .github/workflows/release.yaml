@@ -5,6 +5,8 @@ on:
     push:
         branches:
           - main
+env:
+    VERSION:
 jobs:
   build-image:
     runs-on: ubuntu-latest
@@ -51,7 +53,7 @@ jobs:
 
       - name: Push image
         run: |
-          docker push ${{ vars.IMAGE_NAME }}:${{ vars.VERSION }}
+          docker push ${{ vars.IMAGE_NAME }}:${{ env.VERSION }}
           docker push ${{ vars.IMAGE_NAME }}:latest
 
       - name: Release with mogenius
